@@ -162,4 +162,7 @@ pub fn scoped_threads() {
 
 ## Memory Layout of a Running Program:
 A program's memory is typically divided into these main segments:
-<img src = "chapter-1/images/rust-mem-layout.png">
+
+<div>
+<img src = "chapter-1/images/rust-mem-layout.png"/>
+</div>
