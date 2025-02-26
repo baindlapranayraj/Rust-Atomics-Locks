@@ -164,5 +164,5 @@ pub fn scoped_threads() {
 A program's memory is typically divided into these main segments:
 
 <div>
- <img src="chapter-1/images/rust-mem-layout.png" alt="memory-layout">
+ <img src="https://github.com/baindlapranayraj/Rust-Atomics-Locks/blob/main/chapter-1/images/rust-mem-layout.png?raw=true" alt="memory-layout">
 </div>
