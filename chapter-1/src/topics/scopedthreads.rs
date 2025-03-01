@@ -2,6 +2,7 @@ use std::thread;
 
 pub fn scoped_threads() {
     let mut num = vec![10, 2, 12, 55];
+    let mut lang = vec!["GO 🦝","Rust 🦀","Typescript"];
 
     thread::scope(|s| {  // 1
         s.spawn(|| { // 2
@@ -12,6 +13,12 @@ pub fn scoped_threads() {
             let sum = num.iter().sum::<usize>();
             let res = sum / num.len();
             println!("The second thread of this scoope function is {res}");
+        });
+
+        s.spawn(|| {
+            for i in lang {
+               println!("Your Language is {}",i);
+            }
         });
     }); // 3
 }
