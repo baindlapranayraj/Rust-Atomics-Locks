@@ -12,6 +12,8 @@ pub fn main_thread() {
     let mut numbers = vec![100, 46, 34, 10];
 
     let res = spawn(move || {
+        // Performing some computation on this new thread
+
         let sum_val = numbers.iter().sum::<usize>();
         numbers.pop();
         sum_val / numbers.len()

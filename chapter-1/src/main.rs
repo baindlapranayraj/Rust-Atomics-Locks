@@ -6,9 +6,9 @@ use topics::{
 };
 
 fn main() {
-    main_thread();
+    // main_thread();
     scoped_threads();
-    sharing_ownership();
+    // sharing_ownership();
 
     println!("Hello world from Neovim and Rust");
 }
