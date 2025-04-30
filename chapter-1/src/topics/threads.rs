@@ -29,8 +29,11 @@ fn f() {
     println!("This is the Id of f thread {:?}", id);
 }
 
-// Notes:
+// ===================== Notes =======================
 // 1) Here our code spawns two threads and prints their IDs. However, sometimes the IDs don't appear. This happens because
 //    the main thread exits before the spawned threads finish execution.
 //
 // 2) By default, closures capture variables by reference (&langs).
+//
+// 3) When you move variables into thread, ownership moves with it and the variable get destroyed
+//    on main thread. This is good thing bcoz there is no confusion about where it gets cleaned up.

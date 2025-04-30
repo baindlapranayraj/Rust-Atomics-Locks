@@ -1,73 +1,83 @@
 use std::thread;
-
 use sysinfo::System;
 
+// +++++++++++++++++++ This section covers about scoped threads ++++++++++++++++++++
+
 pub fn scoped_threads() {
+    // Shared mutable vector
     let mut num = vec![10, 2, 12, 55];
-    let mut lang = vec!["GO 🦝", "Rust 🦀", "Typescript"];
 
+    // Create a thread scope where all spawned threads must finish before continuing
     thread::scope(|s| {
-        // 1
-        s.spawn(|| {
-            // 2
-            // println!(
-            //     "First spawn thread from scope function we are accesing {:?}",
-            //     num
-            // );
-        });
+        // ===========================
+        // Problem 1: Mutable borrow in multiple threads
+        // Uncommenting the below code causes a compile error because
+        // Rust forbids multiple mutable borrows at the same time.
+        //
+        // for _ in 0..10 {
+        //     s.spawn(|| {
+        //         num.push(10); // Error: cannot borrow `num` as mutable more than once
+        //     });
+        // }
+        //
+        // Cloning `num` inside the closure would avoid the borrow error,
+        // but then threads would not modify the original vector.
+        //
+        // Atomic types only work for primitive values, not complex types like Vec.
+        //
+        // The solution to safely mutate shared data across threads is covered in `thread_safety.rs`.
+        // ===========================
 
+        // Example thread: Calculate sum and average of `num`
         s.spawn(|| {
-            // 2
             let sum = num.iter().sum::<usize>();
             let res = sum / num.len();
-            // println!("The second thread of this scoope function is {res}");
+            println!("The second thread of this scope function is {res}");
         });
 
-        s.spawn(|| {
-            let mut system = System::new();
-
-            system.refresh_all();
-            println!("+++++++ CPU Details +++++++++");
-
-            let cpus = system.cpus();
-
-            for cpu in cpus {
-                println!(
-                    "The CPU name: {}, CPU brand: {}, CPU usage: {}",
-                    cpu.name(),
-                    cpu.brand(),
-                    cpu.cpu_usage()
-                );
-            }
-        });
-
+        // Thread to print process details
         s.spawn(|| {
             println!("+++++++++ Process Details ++++++++++++");
 
             let mut system = System::new();
-
             system.refresh_all();
-            let process = system.processes();
 
-            for (index, (pid, process)) in process.iter().enumerate() {
-                println!("====== Process #{} ======", index);
+            let processes = system.processes();
+
+            for (index, (pid, process)) in processes.iter().enumerate() {
+                println!("\n====== Process #{} ======", index);
                 println!("Name: {:?}", process.name());
-                println!("PID: {}", process.pid());
-                println!("CPU Usage: {}%", process.cpu_usage());
+                println!("PID: {}", pid);
+                println!("CPU usage: {}%", process.cpu_usage());
                 println!("Memory: {} bytes", process.memory());
                 println!("Status: {:?}", process.status());
                 println!("Command: {:?}", process.cmd());
-                println!();
             }
+
+            println!("Total processes: {}", processes.len());
         });
-    }); // 3
+    }); // thread::scope waits here until all threads finish
 }
 
 // ++++++++++++++++++++++++++++ Learnings ++++++++++++++++++++++++++++
-// 1 ==> thread::scope is used to create a scope where all threads must finish before continuing.
-//  The closure |s| { ... } defines the scope where we can spawn multiple threads.
 //
-// 3 ==> Ensuring All Threads Finish Before Continuing.
+// 1. `thread::scope` creates a scope where all spawned threads must complete
+//    before the program continues. This ensures safe access to stack data.
 //
-// When thread::scope ends, it waits for all spawned threads to complete execution before proceeding.
-// This prevents dangling references and ensures safe memory access.
+// 2. Mutable borrowing rules in Rust prevent multiple mutable borrows,
+//    which causes errors if you try to mutate shared data like `num`
+//    concurrently without synchronization.
+//
+// 3. Cloning data inside threads avoids borrow errors but works on copies,
+//    not the original data.
+//
+// 4. Atomic types only support primitive data, so for complex types like Vec,
+//    you need synchronization primitives (Mutex, RwLock) to safely share mutable data.
+//
+// 5. `thread::scope` automatically joins all spawned threads at the end of the scope,
+//    preventing dangling references and ensuring thread completion.
+//
+// 6. For safely sharing and mutating data across threads, see solutions involving
+//    synchronization primitives (Mutex, Arc) in `thread_safety.rs` or similar.
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
