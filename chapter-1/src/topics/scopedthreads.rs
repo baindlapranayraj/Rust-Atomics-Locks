@@ -5,6 +5,7 @@ use sysinfo::System;
 
 pub fn scoped_threads() {
     // Shared mutable vector
+    #[allow(unused_mut)]
     let mut num = vec![10, 2, 12, 55];
 
     // Create a thread scope where all spawned threads must finish before continuing

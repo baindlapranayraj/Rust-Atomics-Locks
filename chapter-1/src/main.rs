@@ -7,9 +7,9 @@ use topics::{
 };
 
 fn main() {
-    // main_thread();
-    // scoped_threads();
-    // sharing_ownership();
+    main_thread();
+    scoped_threads();
+    sharing_ownership();
 
     safety_threads();
 
