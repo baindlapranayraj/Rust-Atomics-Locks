@@ -29,6 +29,7 @@ This chapter is divided into two parts about Rust threads:
 - In most current operating systems, an executed program’s code is run in a process, and the operating system will manage multiple processes at once. Within a program, you can also have independent parts that run simultaneously. The features that run these independent parts are called threads.
 - Threads are smaller execution units within a process. A process can have multiple threads, all **sharing memory** within the same process. This splitting computation work in rust will increase the performance of application.
 - Sharing memory between threads can cause issues like **race conditions** and **deadlocks**. Also, if one thread fails, it may affect other threads in the same process.
+- Each thread in a Rust program gets its own independent stack. This separation is a fundamental principle that prevents a huge category of bugs and is strictly enforced by the compiler.
 - By default, every process starts with one **main thread**. Additional threads can be created from this main thread.
 - Each thread acts like an independent worker performing a specific task, enabling concurrent execution.
 
